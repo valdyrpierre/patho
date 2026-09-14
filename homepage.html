@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inflammation &amp; Immunity — Study Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #12181c;
+    --panel: #1b232a;
+    --panel-raised: #222c34;
+    --ink: #e9ede9;
+    --ink-dim: #9fb0aa;
+    --line: #33403c;
+    --gold: #c9a24a;
+    --teal: #5fa8a0;
+    --rust: #bd5b45;
+    --serif: 'Lora', Georgia, serif;
+    --sans: 'Inter', -apple-system, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    min-height:100vh;
+    padding: 28px 16px 60px;
+  }
+  .wrap{max-width:760px;margin:0 auto;}
+
+  header.top{
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 18px;
+    margin-bottom: 22px;
+  }
+  header.top .kicker{
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--gold);
+    font-size: 0.95rem;
+    margin: 0 0 4px;
+  }
+  header.top h1{
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 1.9rem;
+    margin: 0 0 6px;
+    line-height: 1.15;
+  }
+  header.top p.sub{
+    margin:0;
+    color: var(--ink-dim);
+    font-size: 0.92rem;
+  }
+
+  nav.tabs{
+    display:flex;
+    gap: 6px;
+    margin-bottom: 24px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 4px;
+    background: var(--panel);
+  }
+  nav.tabs button{
+    flex:1;
+    background: transparent;
+    border: none;
+    color: var(--ink-dim);
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 0.88rem;
+    padding: 10px 8px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+  }
+  nav.tabs button.active{
+    background: var(--panel-raised);
+    color: var(--gold);
+  }
+  nav.tabs button:hover:not(.active){ color: var(--ink); }
+
+  section.view{ display:none; }
+  section.view.active{ display:block; }
+
+  /* ---------- Flashcards ---------- */
+  .card-progress{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    color: var(--ink-dim);
+    font-size: 0.82rem;
+    margin-bottom: 10px;
+  }
+  .card-stage{
+    padding: 2px 9px;
+    border-radius: 100px;
+    border: 1px solid var(--line);
+    font-size: 0.75rem;
+  }
+  .flash-stage-new{ color: var(--ink-dim); }
+  .flash-stage-known{ color: var(--teal); border-color: var(--teal); }
+
+  .flashcard{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    min-height: 220px;
+    padding: 30px 26px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    cursor: pointer;
+    position:relative;
+  }
+  .flashcard .eyebrow{
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+  .flashcard .face{
+    font-family: var(--serif);
+    font-size: 1.28rem;
+    line-height: 1.4;
+  }
+  .flashcard .hint{
+    position:absolute;
+    bottom: 14px;
+    font-size: 0.74rem;
+    color: var(--ink-dim);
+  }
+  .flash-controls{
+    display:flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .flash-controls .side-btns{ display:flex; gap:10px; }
+  button.pill{
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 10px 16px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: var(--panel-raised);
+    color: var(--ink);
+    cursor:pointer;
+  }
+  button.pill:hover{ border-color: var(--gold); }
+  button.pill.primary{
+    background: var(--gold);
+    color: #1a1408;
+    border-color: var(--gold);
+  }
+  button.pill.rust{ color: var(--rust); }
+  button.pill.rust:hover{ border-color: var(--rust); }
+  button.pill.teal{ color: var(--teal); }
+  button.pill.teal:hover{ border-color: var(--teal); }
+
+  /* ---------- Quiz ---------- */
+  .quiz-head{
+    display:flex;
+    justify-content: space-between;
+    color: var(--ink-dim);
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+  .quiz-track{
+    height: 5px;
+    background: var(--line);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 22px;
+  }
+  .quiz-track .fill{
+    height: 100%;
+    background: var(--gold);
+    transition: width .2s ease;
+  }
+  .q-prompt{
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    margin-bottom: 18px;
+    line-height:1.45;
+  }
+  .q-options{ display:flex; flex-direction:column; gap: 10px; }
+  .q-option{
+    text-align:left;
+    padding: 13px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    cursor:pointer;
+  }
+  .q-option:hover{ border-color: var(--gold); }
+  .q-option.correct{ border-color: var(--teal); background: #1c2c29; color: var(--teal); }
+  .q-option.wrong{ border-color: var(--rust); background: #2c1f1c; color: var(--rust); }
+  .q-option[disabled]{ cursor:default; }
+  .q-explain{
+    margin-top: 16px;
+    font-size: 0.88rem;
+    color: var(--ink-dim);
+    display:none;
+  }
+  .q-footer{
+    margin-top: 20px;
+    display:flex;
+    justify-content:flex-end;
+  }
+  .quiz-result{
+    text-align:center;
+    padding: 40px 10px;
+  }
+  .quiz-result .score{
+    font-family: var(--serif);
+    font-size: 2.6rem;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .quiz-result p{ color: var(--ink-dim); margin-bottom: 24px; }
+
+  /* ---------- Jeopardy ---------- */
+  .jeo-score{
+    text-align:right;
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+  .jeo-board{
+    display:grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+  .jeo-cat{
+    font-family: var(--serif);
+    font-weight:600;
+    font-size: 0.72rem;
+    line-height: 1.25;
+    text-align:center;
+    background: var(--panel-raised);
+    border: 1px solid var(--line);
+    border-radius: 8px 8px 0 0;
+    padding: 8px 4px;
+    color: var(--gold);
+    min-height: 52px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .jeo-cell{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 16px 4px;
+    text-align:center;
+    font-family: var(--serif);
+    font-size: 1rem;
+    color: var(--teal);
+    cursor:pointer;
+  }
+  .jeo-cell:hover{ border-color: var(--gold); }
+  .jeo-cell.used{
+    color: var(--line);
+    cursor: default;
+    background: #161c20;
+  }
+  .jeo-cell.used:hover{ border-color: var(--line); }
+
+  .jeo-modal{
+    position: fixed;
+    inset: 0;
+    background: rgba(9,12,14,0.85);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding: 16px;
+    z-index: 10;
+  }
+  .jeo-modal.active{ display:flex; }
+  .jeo-modal-card{
+    background: var(--panel);
+    border: 1px solid var(--gold);
+    border-radius: 14px;
+    max-width: 480px;
+    width:100%;
+    padding: 30px 26px;
+    text-align:center;
+  }
+  .jeo-modal-card .value{
+    color: var(--gold);
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+    font-weight:600;
+  }
+  .jeo-modal-card .clue{
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    line-height: 1.45;
+    margin-bottom: 22px;
+  }
+  .jeo-modal-card .answer{
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--teal);
+    font-size: 1.05rem;
+    margin-bottom: 22px;
+    display:none;
+  }
+  .jeo-modal-card .btn-row{
+    display:flex;
+    gap: 10px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+
+  footer.note{
+    margin-top: 34px;
+    color: var(--ink-dim);
+    font-size: 0.78rem;
+    text-align:center;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+  }
+
+  @media (max-width: 480px){
+    .jeo-board{ grid-template-columns: repeat(5, 1fr); }
+    .jeo-cat{ font-size: 0.62rem; padding: 6px 2px; min-height: 44px; }
+    .jeo-cell{ font-size: 0.85rem; padding: 12px 2px; }
+    .flashcard{ padding: 22px 16px; min-height: 190px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <p class="kicker">Ch. 9–11 review</p>
+    <h1>Inflammation &amp; Immunity</h1>
+    <p class="sub">Flashcards, quiz, and Jeopardy — built only from your uploaded notes.</p>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-view="flash">Flashcards</button>
+    <button class="tab-btn" data-view="quiz">Quiz</button>
+    <button class="tab-btn" data-view="jeopardy">Jeopardy</button>
+  </nav>
+
+  <!-- FLASHCARDS -->
+  <section class="view active" id="view-flash">
+    <div class="card-progress">
+      <span id="flash-count">Card 1 of 35</span>
+      <span class="card-stage flash-stage-new" id="flash-stage">new</span>
+    </div>
+    <div class="flashcard" id="flashcard">
+      <div class="eyebrow" id="flash-eyebrow">TERM</div>
+      <div class="face" id="flash-face">—</div>
+      <div class="hint">tap card to flip</div>
+    </div>
+    <div class="flash-controls">
+      <button class="pill" id="flash-prev">← Prev</button>
+      <div class="side-btns">
+        <button class="pill rust" id="flash-again">Still learning</button>
+        <button class="pill teal" id="flash-known">Got it</button>
+      </div>
+      <button class="pill" id="flash-next">Next →</button>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="view" id="view-quiz">
+    <div id="quiz-active">
+      <div class="quiz-head">
+        <span id="quiz-position">Question 1 of 15</span>
+        <span id="quiz-score">Score: 0</span>
+      </div>
+      <div class="quiz-track"><div class="fill" id="quiz-fill" style="width:6.66%"></div></div>
+      <div class="q-prompt" id="q-prompt">—</div>
+      <div class="q-options" id="q-options"></div>
+      <div class="q-explain" id="q-explain"></div>
+      <div class="q-footer">
+        <button class="pill primary" id="quiz-next" style="display:none;">Next question →</button>
+      </div>
+    </div>
+    <div class="quiz-result" id="quiz-result" style="display:none;">
+      <div class="score" id="quiz-final-score">0 / 15</div>
+      <p id="quiz-final-note">Nice work.</p>
+      <button class="pill primary" id="quiz-restart">Retake quiz</button>
+    </div>
+  </section>
+
+  <!-- JEOPARDY -->
+  <section class="view" id="view-jeopardy">
+    <div class="jeo-score">Score: <span id="jeo-score">0</span></div>
+    <div class="jeo-board" id="jeo-board"></div>
+  </section>
+
+  <footer class="note">Content sourced only from the uploaded Ch. 9–11 pathology notes.</footer>
+</div>
+
+<div class="jeo-modal" id="jeo-modal">
+  <div class="jeo-modal-card">
+    <div class="value" id="jeo-modal-value">CARDINAL SIGNS — 200</div>
+    <div class="clue" id="jeo-modal-clue">Clue text goes here</div>
+    <div class="answer" id="jeo-modal-answer">Answer text</div>
+    <div class="btn-row">
+      <button class="pill" id="jeo-reveal">Reveal answer</button>
+      <button class="pill teal" id="jeo-correct" style="display:none;">I got it right (+pts)</button>
+      <button class="pill rust" id="jeo-wrong" style="display:none;">I missed it</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===================== DATA — sourced only from uploaded PDF ===================== */
+
+const flashcards = [
+  { term: "Function of inflammation", def: "Eliminate damaged or injured cells/tissue and regenerate new tissue, via phagocytosis of toxins or infectious organisms." },
+  { term: "4 goals of inflammation", def: "Control the inflammatory response, limit infection & further damage, initiate adaptive immune response, initiate healing." },
+  { term: "Rubor", def: "Redness — one of the 5 local cardinal signs of acute inflammation." },
+  { term: "Tumor", def: "Swelling — one of the 5 local cardinal signs of acute inflammation." },
+  { term: "Dolor", def: "Pain — one of the 5 local cardinal signs of acute inflammation." },
+  { term: "Calor", def: "Heat — one of the 5 local cardinal signs of acute inflammation." },
+  { term: "Functio laesa", def: "Loss of function — one of the 5 local cardinal signs of acute inflammation." },
+  { term: "Systemic signs of inflammation", def: "Fever, fatigue, and anorexia (part of the acute phase response)." },
+  { term: "Acute inflammation", def: "Self-limiting and short lived; has a beginning and end; lasts minutes to days (e.g., a twisted ankle)." },
+  { term: "Chronic inflammation", def: "Lasts days to years, as long as it persists; can cause liver damage or scar tissue (e.g., smoking causing alveoli damage)." },
+  { term: "Wound healing process (3 stages)", def: "Inflammation → Proliferation → Remodeling." },
+  { term: "Proliferation (healing stage)", def: "Builds new tissue to fill the space left by damage." },
+  { term: "Remodeling (healing stage)", def: "Reforms scarring with connective/fibrous tissue." },
+  { term: "Primary healing", def: "Small, clean wound (e.g., a straight surgical cut) with no tissue loss — heals cleanly." },
+  { term: "Secondary healing", def: "Great loss of contaminated, traumatic tissue — takes longer and leaves more visible granulation." },
+  { term: "Innate immunity", def: "The immunity you're born with: skin, stomach acid, mucous, enzymes in tears & skin oils." },
+  { term: "Adaptive immunity", def: "Immunity that is acquired, e.g., from covid, measles, or chicken pox." },
+  { term: "Active immunity", def: "Your own immune system protects you from pathogens (e.g., vaccine) — longer lasting." },
+  { term: "Passive immunity", def: "Antibodies passed to you, e.g., a baby's antibodies from mom via placenta or breast milk — short lived." },
+  { term: "Lysosomes", def: "The part of the cell responsible for engulfing (phagocytosis)." },
+  { term: "Neutrophils", def: "The first cell to arrive at the site of inflammation, to get rid of damaged cells." },
+  { term: "Leukocyte accumulation", def: "'Gather' step of cellular inflammation — cells migrate and adhere, getting together." },
+  { term: "Transmigration", def: "'Move' step of cellular inflammation — cells march through the vessel wall into the tissue." },
+  { term: "Chemotaxis", def: "'Kill' step of cellular inflammation — cells are taken to the site of infection (chemo = kill)." },
+  { term: "Phagocytosis", def: "'Get rid of' step of cellular inflammation — engulfs & kills the invader, turning it into exudate." },
+  { term: "Histamine", def: "Inflammatory mediator linked to allergy." },
+  { term: "Protease", def: "A protein-type inflammatory mediator." },
+  { term: "Cytokines", def: "Mediators that help with cell communication." },
+  { term: "Chemokine", def: "A protein mediator that helps cells adhere." },
+  { term: "Kinin system", def: "Systemic mediator system activated by the liver; bradykinin causes pain." },
+  { term: "Coagulation system", def: "Systemic mediator system activated by the liver; responsible for clotting." },
+  { term: "Complement system", def: "Systemic mediator system activated by the liver; has 3 pathways." },
+  { term: "C-reactive protein (CRP)", def: "Increases in the blood where there is high inflammation." },
+  { term: "T lymphocytes (cell mediated)", def: "Tell B cells to make antibodies." },
+  { term: "B lymphocytes (humoral)", def: "Make antibodies." }
+];
+
+const quizQuestions = [
+  {
+    q: "What is the primary function of inflammation?",
+    options: [
+      "Eliminate damaged tissue and regenerate new tissue",
+      "Permanently destroy the affected organ",
+      "Lower body temperature",
+      "Replace lymphocytes"
+    ],
+    correct: 0,
+    explain: "Inflammation eliminates damaged/injured cells or tissue (via phagocytosis) and regenerates new tissue."
+  },
+  {
+    q: "Which cardinal sign of inflammation is 'Dolor'?",
+    options: ["Redness", "Swelling", "Pain", "Heat"],
+    correct: 2,
+    explain: "Dolor = pain. (Rubor = redness, Tumor = swelling, Calor = heat, Functio laesa = loss of function.)"
+  },
+  {
+    q: "Which term describes loss of function as a cardinal sign?",
+    options: ["Rubor", "Functio laesa", "Calor", "Tumor"],
+    correct: 1,
+    explain: "Functio laesa means loss of function, one of the 5 local cardinal signs."
+  },
+  {
+    q: "Which best describes acute inflammation?",
+    options: [
+      "Lasts days to years",
+      "Self-limiting, short lived, has a beginning and end",
+      "Causes permanent scar tissue only",
+      "Only occurs systemically"
+    ],
+    correct: 1,
+    explain: "Acute inflammation is self-limiting (e.g., a twisted ankle) and lasts minutes to days."
+  },
+  {
+    q: "Chronic inflammation lasting from smoking-related alveoli damage lasts how long?",
+    options: ["Minutes to days", "Days to years", "Only during the acute phase", "It cannot become chronic"],
+    correct: 1,
+    explain: "Chronic inflammation lasts days to years, as long as it persists — e.g., smoking damaging alveoli."
+  },
+  {
+    q: "Put the wound healing process in order.",
+    options: [
+      "Remodeling → Proliferation → Inflammation",
+      "Inflammation → Proliferation → Remodeling",
+      "Proliferation → Inflammation → Remodeling",
+      "Inflammation → Remodeling → Proliferation"
+    ],
+    correct: 1,
+    explain: "Wound healing goes: Inflammation, then Proliferation (build new tissue), then Remodeling (scar reforms)."
+  },
+  {
+    q: "A clean surgical incision with no tissue loss heals by which process?",
+    options: ["Secondary healing", "Primary healing", "Chronic healing", "Passive healing"],
+    correct: 1,
+    explain: "Primary healing applies to small, clean wounds like surgical cuts, with no tissue loss."
+  },
+  {
+    q: "Which type of immunity are you born with?",
+    options: ["Adaptive immunity", "Active immunity", "Innate immunity", "Passive immunity"],
+    correct: 2,
+    explain: "Innate immunity is present from birth: skin, stomach acid, mucous, tear/skin-oil enzymes."
+  },
+  {
+    q: "A baby receiving antibodies through breast milk is an example of which type of immunity?",
+    options: ["Active immunity", "Passive immunity", "Innate immunity", "Adaptive immunity"],
+    correct: 1,
+    explain: "Passive immunity involves antibodies passed to you — like a baby getting antibodies via placenta or breast milk. It's short lived."
+  },
+  {
+    q: "Which part of the cell is responsible for engulfing during phagocytosis?",
+    options: ["Nucleus", "Mitochondria", "Lysosomes", "Ribosomes"],
+    correct: 2,
+    explain: "Lysosomes are the part of the cell responsible for engulfing."
+  },
+  {
+    q: "Which cell is first to arrive at the site of inflammation?",
+    options: ["B lymphocytes", "T lymphocytes", "Neutrophils", "Erythrocytes"],
+    correct: 2,
+    explain: "Neutrophils are the first cells to come to the site, to get rid of damaged cells."
+  },
+  {
+    q: "In the cellular stage of inflammation, which step means cells are taken to the site of infection ('chemo' = kill)?",
+    options: ["Transmigration", "Leukocyte accumulation", "Chemotaxis", "Phagocytosis"],
+    correct: 2,
+    explain: "Chemotaxis is the 'kill' step — cells are taken to the site of infection."
+  },
+  {
+    q: "Which mediator is linked to allergy?",
+    options: ["Protease", "Histamine", "Chemokine", "Cytokine"],
+    correct: 1,
+    explain: "Histamine is the mediator linked to allergic response."
+  },
+  {
+    q: "Which liver-activated systemic system is responsible for clotting?",
+    options: ["Kinin system", "Complement system", "Coagulation system", "Chemotaxis system"],
+    correct: 2,
+    explain: "The coagulation system, activated by the liver, is responsible for clotting."
+  },
+  {
+    q: "Which lymphocyte type makes antibodies directly (humoral immunity)?",
+    options: ["T lymphocytes", "B lymphocytes", "Neutrophils", "Erythrocytes"],
+    correct: 1,
+    explain: "B lymphocytes (humoral) make antibodies; T lymphocytes (cell mediated) tell B cells to make them."
+  }
+];
+
+const jeopardyCategories = [
+  {
+    name: "Cardinal Signs",
+    clues: [
+      { value: 100, clue: "This Latin term for a cardinal sign of inflammation means 'redness.'", answer: "Rubor" },
+      { value: 200, clue: "This Latin term for a cardinal sign of inflammation means 'swelling.'", answer: "Tumor" },
+      { value: 300, clue: "This Latin term for a cardinal sign of inflammation means 'pain.'", answer: "Dolor" },
+      { value: 400, clue: "This Latin term for a cardinal sign of inflammation means 'heat.'", answer: "Calor" },
+      { value: 500, clue: "This term for a cardinal sign of inflammation means 'loss of function.'", answer: "Functio laesa" }
+    ]
+  },
+  {
+    name: "Acute vs Chronic",
+    clues: [
+      { value: 100, clue: "This type of inflammation is self-limiting and short lived, like a twisted ankle.", answer: "Acute inflammation" },
+      { value: 200, clue: "This type of inflammation lasts days to years, as long as it persists.", answer: "Chronic inflammation" },
+      { value: 300, clue: "Acute inflammation lasts minutes to this longer unit of time.", answer: "Days" },
+      { value: 400, clue: "Smoking causing alveoli damage is an example of this type of inflammation.", answer: "Chronic inflammation" },
+      { value: 500, clue: "Along with fever and fatigue, this is the third systemic (acute phase response) sign.", answer: "Anorexia" }
+    ]
+  },
+  {
+    name: "Immunity Types",
+    clues: [
+      { value: 100, clue: "This type of immunity is the one you're born with.", answer: "Innate immunity" },
+      { value: 200, clue: "This type of immunity is acquired, such as from covid or chicken pox.", answer: "Adaptive immunity" },
+      { value: 300, clue: "This type of immunity comes from your own immune system, like a vaccine, and lasts longer.", answer: "Active immunity" },
+      { value: 400, clue: "This type of immunity is passed to you, like a baby's antibodies from mom's placenta or breast milk.", answer: "Passive immunity" },
+      { value: 500, clue: "This part of the cell is responsible for engulfing.", answer: "Lysosomes" }
+    ]
+  },
+  {
+    name: "Cell Stage & Mediators",
+    clues: [
+      { value: 100, clue: "This is the first cell to arrive at the site of inflammation.", answer: "Neutrophils" },
+      { value: 200, clue: "This inflammatory mediator is linked to allergy.", answer: "Histamine" },
+      { value: 300, clue: "This step of cellular inflammation is the cells marching through the vessel into the tissue.", answer: "Transmigration" },
+      { value: 400, clue: "This step of cellular inflammation takes cells to the site of infection ('chemo' means kill).", answer: "Chemotaxis" },
+      { value: 500, clue: "This protein increases in the blood wherever there is high inflammation.", answer: "C-reactive protein (CRP)" }
+    ]
+  },
+  {
+    name: "Healing & Lymphocytes",
+    clues: [
+      { value: 100, clue: "This is the first of the 3 stages of wound healing.", answer: "Inflammation" },
+      { value: 200, clue: "This wound healing stage builds new tissue to fill the space left by damage.", answer: "Proliferation" },
+      { value: 300, clue: "This type of healing applies to a small, clean wound like a surgical incision.", answer: "Primary healing" },
+      { value: 400, clue: "This lymphocyte type makes antibodies (humoral immunity).", answer: "B lymphocytes" },
+      { value: 500, clue: "This lymphocyte type tells B cells to make antibodies (cell mediated immunity).", answer: "T lymphocytes" }
+    ]
+  }
+];
+
+/* ===================== TAB SWITCHING ===================== */
+const tabBtns = document.querySelectorAll(".tab-btn");
+const views = { flash: document.getElementById("view-flash"), quiz: document.getElementById("view-quiz"), jeopardy: document.getElementById("view-jeopardy") };
+tabBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    tabBtns.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    Object.values(views).forEach(v => v.classList.remove("active"));
+    views[btn.dataset.view].classList.add("active");
+  });
+});
+
+/* ===================== FLASHCARDS ===================== */
+let flashIndex = 0;
+let flashFlipped = false;
+const flashKnown = new Set();
+
+const flashcardEl = document.getElementById("flashcard");
+const flashFace = document.getElementById("flash-face");
+const flashEyebrow = document.getElementById("flash-eyebrow");
+const flashCount = document.getElementById("flash-count");
+const flashStage = document.getElementById("flash-stage");
+
+function renderFlashcard(){
+  const card = flashcards[flashIndex];
+  flashFlipped = false;
+  flashEyebrow.textContent = "TERM";
+  flashFace.textContent = card.term;
+  flashCount.textContent = `Card ${flashIndex + 1} of ${flashcards.length}`;
+  if(flashKnown.has(flashIndex)){
+    flashStage.textContent = "known";
+    flashStage.className = "card-stage flash-stage-known";
+  } else {
+    flashStage.textContent = "new";
+    flashStage.className = "card-stage flash-stage-new";
+  }
+}
+
+flashcardEl.addEventListener("click", () => {
+  const card = flashcards[flashIndex];
+  flashFlipped = !flashFlipped;
+  if(flashFlipped){
+    flashEyebrow.textContent = "MEANS";
+    flashFace.textContent = card.def;
+  } else {
+    flashEyebrow.textContent = "TERM";
+    flashFace.textContent = card.term;
+  }
+});
+
+document.getElementById("flash-next").addEventListener("click", () => {
+  flashIndex = (flashIndex + 1) % flashcards.length;
+  renderFlashcard();
+});
+document.getElementById("flash-prev").addEventListener("click", () => {
+  flashIndex = (flashIndex - 1 + flashcards.length) % flashcards.length;
+  renderFlashcard();
+});
+document.getElementById("flash-known").addEventListener("click", () => {
+  flashKnown.add(flashIndex);
+  flashIndex = (flashIndex + 1) % flashcards.length;
+  renderFlashcard();
+});
+document.getElementById("flash-again").addEventListener("click", () => {
+  flashKnown.delete(flashIndex);
+  flashIndex = (flashIndex + 1) % flashcards.length;
+  renderFlashcard();
+});
+
+renderFlashcard();
+
+/* ===================== QUIZ ===================== */
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = false;
+
+const quizPosition = document.getElementById("quiz-position");
+const quizScoreEl = document.getElementById("quiz-score");
+const quizFill = document.getElementById("quiz-fill");
+const qPrompt = document.getElementById("q-prompt");
+const qOptions = document.getElementById("q-options");
+const qExplain = document.getElementById("q-explain");
+const quizNextBtn = document.getElementById("quiz-next");
+const quizActive = document.getElementById("quiz-active");
+const quizResult = document.getElementById("quiz-result");
+
+function renderQuiz(){
+  quizAnswered = false;
+  const item = quizQuestions[quizIndex];
+  quizPosition.textContent = `Question ${quizIndex + 1} of ${quizQuestions.length}`;
+  quizScoreEl.textContent = `Score: ${quizScore}`;
+  quizFill.style.width = `${((quizIndex) / quizQuestions.length) * 100}%`;
+  qPrompt.textContent = item.q;
+  qExplain.style.display = "none";
+  qExplain.textContent = "";
+  quizNextBtn.style.display = "none";
+  qOptions.innerHTML = "";
+
+  item.options.forEach((opt, i) => {
+    const b = document.createElement("button");
+    b.className = "q-option";
+    b.textContent = opt;
+    b.addEventListener("click", () => handleQuizAnswer(i, b));
+    qOptions.appendChild(b);
+  });
+}
+
+function handleQuizAnswer(i, btnEl){
+  if(quizAnswered) return;
+  quizAnswered = true;
+  const item = quizQuestions[quizIndex];
+  const allBtns = qOptions.querySelectorAll(".q-option");
+  allBtns.forEach((b, idx) => {
+    b.disabled = true;
+    if(idx === item.correct) b.classList.add("correct");
+  });
+  if(i !== item.correct){
+    btnEl.classList.add("wrong");
+  } else {
+    quizScore++;
+  }
+  quizScoreEl.textContent = `Score: ${quizScore}`;
+  qExplain.textContent = item.explain;
+  qExplain.style.display = "block";
+  quizNextBtn.style.display = "inline-block";
+}
+
+quizNextBtn.addEventListener("click", () => {
+  quizIndex++;
+  if(quizIndex >= quizQuestions.length){
+    quizFill.style.width = "100%";
+    quizActive.style.display = "none";
+    quizResult.style.display = "block";
+    document.getElementById("quiz-final-score").textContent = `${quizScore} / ${quizQuestions.length}`;
+    const pct = quizScore / quizQuestions.length;
+    let note = "Solid grasp of the material.";
+    if(pct === 1) note = "Perfect score — you know this chapter cold.";
+    else if(pct < 0.6) note = "Worth another pass through the flashcards before test day.";
+    document.getElementById("quiz-final-note").textContent = note;
+  } else {
+    renderQuiz();
+  }
+});
+
+document.getElementById("quiz-restart").addEventListener("click", () => {
+  quizIndex = 0;
+  quizScore = 0;
+  quizActive.style.display = "block";
+  quizResult.style.display = "none";
+  renderQuiz();
+});
+
+renderQuiz();
+
+/* ===================== JEOPARDY ===================== */
+let jeoScore = 0;
+const jeoScoreEl = document.getElementById("jeo-score");
+const jeoBoard = document.getElementById("jeo-board");
+const jeoModal = document.getElementById("jeo-modal");
+const jeoModalValue = document.getElementById("jeo-modal-value");
+const jeoModalClue = document.getElementById("jeo-modal-clue");
+const jeoModalAnswer = document.getElementById("jeo-modal-answer");
+const jeoReveal = document.getElementById("jeo-reveal");
+const jeoCorrect = document.getElementById("jeo-correct");
+const jeoWrong = document.getElementById("jeo-wrong");
+
+let activeCell = null;
+
+function buildBoard(){
+  jeoBoard.innerHTML = "";
+  jeopardyCategories.forEach(cat => {
+    const catEl = document.createElement("div");
+    catEl.className = "jeo-cat";
+    catEl.textContent = cat.name;
+    jeoBoard.appendChild(catEl);
+  });
+  for(let row = 0; row < 5; row++){
+    jeopardyCategories.forEach((cat, catIdx) => {
+      const clue = cat.clues[row];
+      const cell = document.createElement("div");
+      cell.className = "jeo-cell";
+      cell.textContent = clue.value;
+      cell.dataset.cat = catIdx;
+      cell.dataset.row = row;
+      cell.addEventListener("click", () => openClue(cell, clue));
+      jeoBoard.appendChild(cell);
+    });
+  }
+}
+
+function openClue(cellEl, clue){
+  if(cellEl.classList.contains("used")) return;
+  activeCell = cellEl;
+  jeoModalValue.textContent = `${jeopardyCategories[cellEl.dataset.cat].name.toUpperCase()} — ${clue.value}`;
+  jeoModalClue.textContent = clue.clue;
+  jeoModalAnswer.textContent = clue.answer;
+  jeoModalAnswer.style.display = "none";
+  jeoReveal.style.display = "inline-block";
+  jeoCorrect.style.display = "none";
+  jeoWrong.style.display = "none";
+  jeoModal.classList.add("active");
+  activeCell.dataset.value = clue.value;
+}
+
+jeoReveal.addEventListener("click", () => {
+  jeoModalAnswer.style.display = "block";
+  jeoReveal.style.display = "none";
+  jeoCorrect.style.display = "inline-block";
+  jeoWrong.style.display = "inline-block";
+});
+
+function closeClue(correct){
+  if(activeCell){
+    const value = parseInt(activeCell.dataset.value, 10);
+    if(correct) jeoScore += value;
+    activeCell.classList.add("used");
+    activeCell.textContent = "";
+  }
+  jeoScoreEl.textContent = jeoScore;
+  jeoModal.classList.remove("active");
+  activeCell = null;
+}
+
+jeoCorrect.addEventListener("click", () => closeClue(true));
+jeoWrong.addEventListener("click", () => closeClue(false));
+jeoModal.addEventListener("click", (e) => {
+  if(e.target === jeoModal){
+    // clicking outside just closes without scoring, cell stays available
+    jeoModal.classList.remove("active");
+    activeCell = null;
+  }
+});
+
+buildBoard();
+</script>
+</body>
+</html>
